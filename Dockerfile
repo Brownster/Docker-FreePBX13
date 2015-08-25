@@ -7,8 +7,9 @@ ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 13.1
-ENV FREEPBXVER 13
+ENV FREEPBXVER 13.0
 ENV FREEPBXPORT 8009
+ENV MYSQLPSSWD pass123
 ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
@@ -27,7 +28,27 @@ EXPOSE 10000-20000/udp
 ADD start.sh /root/
 
 #Install packets that are needed
-RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev openssl lamp-server^ 1>/dev/null
+# RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev openssl lamp-server^ 1>/dev/null
+
+RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` lynx libiksemel-dev mariadb-server mariadb php php-mysql php-mbstring tftp-server httpd ncurses-devel sendmail sendmail-cf sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel subversion kernel-devel git php-process crontabs cronie cronie-anacron wget vim php-xml uuid-devel sqlite-devel net-tools gnutls-devel php-pear
+
+RUN pear install Console_Getopt \\
+# Start maria DB
+&& service mysql start \\
+&& update-rc.d mysql defaults \\
+# Make sure that NOBODY can access the server without a password
+&& mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQLPSSWD') WHERE User = 'root'" \\
+# Kill the anonymous users
+&& mysql -e "DROP USER ''@'localhost'" \\
+# Because our hostname varies we'll use some Bash magic here.
+&& mysql -e "DROP USER ''@'$(hostname)'" \\
+# Kill off the demo database
+&& mysql -e "DROP DATABASE test" \\
+# Make our changes take effect
+&& mysql -e "FLUSH PRIVILEGES" \\
+# start apache
+&& service enable httpd.service \\
+&& service start httpd.service \\
 
 # add asterisk user
 RUN groupadd -r $ASTERISKUSER \
@@ -40,9 +61,7 @@ RUN groupadd -r $ASTERISKUSER \
 #  && chmod +x /usr/local/bin/gosu \
   && apt-get purge -y \
 
-#Install Pear DB
-  && pear uninstall db 1>/dev/null \
-  && pear install db-1.7.14 1>/dev/null
+
 
 #build pj project
 #build jansson
@@ -62,11 +81,12 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
   
 # Download asterisk.
 # Currently Certified Asterisk 13.1.
-  && curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-13.1-current.tar.gz 1>/dev/null \
+  && curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz 1>/dev/null \
 
 # gunzip asterisk
   && mkdir /tmp/asterisk \
-  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null
+  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null \
+  && rm -f /tmp/asterisk.tar.gz 1>/dev/null \
 WORKDIR /tmp/asterisk
 
 # make asterisk.
@@ -83,7 +103,8 @@ RUN mkdir /etc/asterisk \
   && make install 1> /dev/null \
   && make config 1>/dev/null \
   && ldconfig \
-
+  && chkconfig asterisk off \
+# ateris sounds files
   && cd /var/lib/asterisk/sounds \
   && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
   && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
@@ -105,9 +126,9 @@ RUN mkdir /etc/asterisk \
 
 #mod to apache
 #Setup mysql
-  && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
-  && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
-  && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
+  && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php.ini \
+  && -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/httpd/conf/httpd.conf \
+  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
   && service apache2 restart 1>/dev/null \
   && /etc/init.d/mysql start 1>/dev/null \
   && mysqladmin -u root create asterisk \
@@ -117,24 +138,15 @@ RUN mkdir /etc/asterisk \
   && mysql -u root -e "flush privileges;"
 
 WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER.tgz 1>/dev/null 2>/dev/null \
+RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
-  && tar vxfz freepbx-$FREEPBXVER.tgz 1>/dev/null \
-  && cd /tmp/freepbx \
+  && tar vxfz freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
+  && rm -f freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
+  && cd /tmp/freepbx 1>/dev/null \
   && /etc/init.d/mysql start 1>/dev/null \
   && /usr/sbin/asterisk 1>/dev/null \
-  && ./install_amp --installdb --username=$ASTERISKUSER --password=$ASTERISK_DB_PW 1>/dev/null \
-  && amportal chown \
-  && amportal reload \
-  && asterisk -rx "core restart now" \
-  && amportal chown \
-  && amportal reload 1>/dev/null \
-  && asterisk -rx "core restart now" \
-  && amportal a ma refreshsignatures 1>/dev/null \
-  && amportal chown \
-  && amportal reload \
-  && asterisk -rx "core restart now" \
-  && && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf \
+  && ./install -n 1>/dev/null \
+  && && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
   && sed -i 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf \
