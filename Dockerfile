@@ -1,6 +1,6 @@
 #asterisk docker file for unraid 6
 FROM phusion/baseimage:0.9.15
-MAINTAINER marc brown <marc@22walker.co.uk> v0.3.2
+MAINTAINER marc brown <marc@22walker.co.uk> v0.0.2
 
 # Set correct environment variables.
 ENV HOME /root
@@ -30,7 +30,9 @@ ADD start.sh /root/
 #Install packets that are needed
 # RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php-db php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git subversion unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev wget sox mpg123 libwww-perl php5 php5-json libiksemel-dev openssl lamp-server^ 1>/dev/null
 
-RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` lynx libiksemel-dev mariadb-server mariadb php php-mysql php-mbstring tftp-server httpd ncurses-devel sendmail sendmail-cf sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel subversion kernel-devel git php-process crontabs cronie cronie-anacron wget vim php-xml uuid-devel sqlite-devel net-tools gnutls-devel php-pear
+RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev
+
+# RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` lynx libiksemel-dev mariadb-server mariadb php php-mysql php-mbstring tftp-server httpd ncurses-devel sendmail sendmail-cf sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel subversion kernel-devel git php-process crontabs cronie cronie-anacron wget vim php-xml uuid-devel sqlite-devel net-tools gnutls-devel php-pear
 
 RUN pear install Console_Getopt \\
 # Start maria DB
@@ -47,8 +49,7 @@ RUN pear install Console_Getopt \\
 # Make our changes take effect
 && mysql -e "FLUSH PRIVILEGES" \\
 # start apache
-&& service enable httpd.service \\
-&& service start httpd.service \\
+&& service apache2 restart \\
 
 # add asterisk user
 RUN groupadd -r $ASTERISKUSER \
