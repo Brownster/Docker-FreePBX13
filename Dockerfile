@@ -27,22 +27,9 @@ EXPOSE 10000-20000/udp
 ADD start.sh /root/
 
 #Install packages that are needed
-RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev
+RUN apt-get update && apt-get install -y build-essential linux-headers-`uname -r` openssh-server openssl libiksemel-dev lamp-server^ apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev
 # Pear install
 RUN pear install Console_Getopt \
-
-# Start maria DB
- && service mysql start \
-# Make sure that NOBODY can access the server without a password
- && mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MARIA_DB_PW') WHERE User = 'root'" \
-# Kill the anonymous users
- && mysql -e "DROP USER ''@'localhost'" \
-# Because our hostname varies we'll use some Bash magic here.
- && mysql -e "DROP USER ''@'$(hostname)'" \
-# Kill off the demo database
- && mysql -e "DROP DATABASE test" \
-# Make our changes take effect
- && mysql -e "FLUSH PRIVILEGES"
 
 # add asterisk user
 RUN groupadd -r $ASTERISKUSER \
