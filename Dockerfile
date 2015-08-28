@@ -124,10 +124,10 @@ RUN mkdir /etc/asterisk \
 #mod to apache
 #Setup mysql
   && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php.ini \
-  && -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/httpd/conf/httpd.conf \
-  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf \
+  && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
+  && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
+  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
   && service apache2 restart 1>/dev/null \
-  && /etc/init.d/mysql start 1>/dev/null \
   && mysqladmin -u root create asterisk \
   && mysqladmin -u root create asteriskcdrdb \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
