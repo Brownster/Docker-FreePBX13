@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Container>
+  <Category>Communication</Category>
   <Name>FreePBX 13</Name>
   <Description>FreePBX 13 beta Asterisk 13.1 - Let Freedom Ring</Description>
+  <Project>https://www.freepbx.org/</Project>
   <Registry>https://github.com/Brownster/Docker-FreePBX13</Registry>
   <Repository>brownster/freepbx13</Repository>
   <BindTime>true</BindTime>
