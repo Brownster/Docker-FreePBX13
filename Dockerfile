@@ -136,13 +136,12 @@ RUN mkdir /etc/asterisk \
 
 WORKDIR /usr/src
 RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
-  && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
   && rm -f freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
   && /etc/init.d/mysql start 1>/dev/null \
   && /usr/src/freepbx/start_asterisk start 1>/dev/null \
   && /usr/src/freepbx/install -n 1>/dev/null \
-  && && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null \
+  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
   && sed -i 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf \
