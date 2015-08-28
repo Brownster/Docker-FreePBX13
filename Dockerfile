@@ -33,30 +33,30 @@ RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server a
 
 # RUN apt-get update && apt-get install -y build-essential curl libgtk2.0-dev linux-headers-`uname -r` lynx libiksemel-dev mariadb-server mariadb php php-mysql php-mbstring tftp-server httpd ncurses-devel sendmail sendmail-cf sox newt-devel libxml2-devel libtiff-devel audiofile-devel gtk2-devel subversion kernel-devel git php-process crontabs cronie cronie-anacron wget vim php-xml uuid-devel sqlite-devel net-tools gnutls-devel php-pear
 
-RUN pear install Console_Getopt \\
+RUN pear install Console_Getopt \
 # Start maria DB
-&& service mysql start \\
+ && service mysql start \
 # Make sure that NOBODY can access the server without a password
-&& mysql -e "UPDATE mysql.user SET Password = PASSWORD('$ASTERISK_DB_PW') WHERE User = 'root'" \\
+ && mysql -e "UPDATE mysql.user SET Password = PASSWORD('$ASTERISK_DB_PW') WHERE User = 'root'" \
 # Kill the anonymous users
-&& mysql -e "DROP USER ''@'localhost'" \\
+ && mysql -e "DROP USER ''@'localhost'" \
 # Because our hostname varies we'll use some Bash magic here.
-&& mysql -e "DROP USER ''@'$(hostname)'" \\
+ && mysql -e "DROP USER ''@'$(hostname)'" \
 # Kill off the demo database
-&& mysql -e "DROP DATABASE test" \\
+ && mysql -e "DROP DATABASE test" \
 # Make our changes take effect
-&& mysql -e "FLUSH PRIVILEGES" \\
+ && mysql -e "FLUSH PRIVILEGES" \
 
 # add asterisk user
-RUN groupadd -r $ASTERISKUSER \
-  && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
-  && mkdir /var/lib/asterisk \
-  && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
-  && usermod --home /var/lib/asterisk $ASTERISKUSER \
-  && rm -rf /var/lib/apt/lists/* \
+ && groupadd -r $ASTERISKUSER \
+ && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
+ && mkdir /var/lib/asterisk \
+ && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
+ && usermod --home /var/lib/asterisk $ASTERISKUSER \
+ && rm -rf /var/lib/apt/lists/* \
 #  && curl -o /usr/local/bin/gosu -SL 'https://github.com/tianon/gosu/releases/download/1.1/gosu' \
 #  && chmod +x /usr/local/bin/gosu \
-  && apt-get purge -y \
+ && apt-get purge -y
 
 
 
@@ -134,15 +134,14 @@ RUN mkdir /etc/asterisk \
   && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
   && mysql -u root -e "flush privileges;"
 
-WORKDIR /tmp
-RUN wget http://mirror.freepbx.org/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
+WORKDIR /usr/src
+RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
   && ln -s /var/lib/asterisk/moh /var/lib/asterisk/mohmp3 \
   && tar vxfz freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
   && rm -f freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
-  && cd /tmp/freepbx 1>/dev/null \
   && /etc/init.d/mysql start 1>/dev/null \
-  && /usr/sbin/asterisk 1>/dev/null \
-  && ./install -n 1>/dev/null \
+  && /usr/src/freepbx/start_asterisk start 1>/dev/null \
+  && /usr/src/freepbx/install -n 1>/dev/null \
   && && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null \
 
 # Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
