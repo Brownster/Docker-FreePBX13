@@ -28,7 +28,7 @@ EXPOSE 10000-20000/udp
 ADD start.sh /root/
 
 #Install packages that are needed
-RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev 1>/dev/null \
+RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev 1>/dev/null
 
 # Pear install
 RUN pear install Console_Getopt \
@@ -44,10 +44,10 @@ RUN pear install Console_Getopt \
 # Kill off the demo database
  && mysql -e "DROP DATABASE test" \
 # Make our changes take effect
- && mysql -e "FLUSH PRIVILEGES" \
+ && mysql -e "FLUSH PRIVILEGES"
 
 # add asterisk user
- && groupadd -r $ASTERISKUSER \
+RUN groupadd -r $ASTERISKUSER \
  && useradd -r -g $ASTERISKUSER $ASTERISKUSER \
  && mkdir /var/lib/asterisk \
  && chown $ASTERISKUSER:$ASTERISKUSER /var/lib/asterisk \
@@ -77,39 +77,39 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
 # gunzip asterisk
   && mkdir /tmp/asterisk \
   && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null \
-  && rm -f /tmp/asterisk.tar.gz 1>/dev/null \
+  && rm -f /tmp/asterisk.tar.gz 1>/dev/null
 WORKDIR /tmp/asterisk
 
 # make asterisk.
 # ENV rebuild_date 2015-01-29
 RUN mkdir /etc/asterisk \
 # Configure
-  && ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1> /dev/null \
+  && ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 # Remove the native build option
   && make menuselect.makeopts 1>/dev/null \
 #  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
  && menuselect/menuselect --enable chan_sip --disable BUILD_NATIVE  --enable CORE-SOUNDS-EN-WAV --enable CORE-SOUNDS-EN-SLN16 --enable MOH-OPSOUND-WAV --enable MOH-OPSOUND-SLN16 menuselect.makeopts  menuselect.makeopts 1>/dev/null \
 # Continue with a standard make.
- && make 1> /dev/null \
- && make install 1> /dev/null \
+ && make 1>/dev/null \
+ && make install 1>/dev/null \
  && make config 1>/dev/null \
  && ldconfig \
  && chkconfig asterisk off \
 # aterisk sounds files
- && cd /var/lib/asterisk/sounds /dev/null \
- && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-core-sounds-en-wav-current.tar.gz /dev/null \
- && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz /dev/null \
- && tar xvf asterisk-core-sounds-en-wav-current.tar.gz /dev/null \
- && rm -f asterisk-core-sounds-en-wav-current.tar.gz /dev/null \
- && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz /dev/null \
- && rm -f asterisk-extra-sounds-en-wav-current.tar.gz /dev/null \
+ && cd /var/lib/asterisk/sounds 1>/dev/null \
+ && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-core-sounds-en-wav-current.tar.gz 1>/dev/null \
+ && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
+ && tar xvf asterisk-core-sounds-en-wav-current.tar.gz 1>/dev/null \
+ && rm -f asterisk-core-sounds-en-wav-current.tar.gz 1>/dev/null \
+ && tar xfz asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
+ && rm -f asterisk-extra-sounds-en-wav-current.tar.gz 1>/dev/null \
 # Wideband Audio download
- && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-core-sounds-en-g722-current.tar.gz /dev/null \
- && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz /dev/null \
- && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz /dev/null \
- && rm -f asterisk-extra-sounds-en-g722-current.tar.gz /dev/null \
- && tar xfz asterisk-core-sounds-en-g722-current.tar.gz /dev/null \
- && rm -f asterisk-core-sounds-en-g722-current.tar.gz /dev/null \
+ && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-core-sounds-en-g722-current.tar.gz 1>/dev/null \
+ && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
+ && tar xfz asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
+ && rm -f asterisk-extra-sounds-en-g722-current.tar.gz 1>/dev/null \
+ && tar xfz asterisk-core-sounds-en-g722-current.tar.gz 1>/dev/null \
+ && rm -f asterisk-core-sounds-en-g722-current.tar.gz 1>/dev/null \
 
  && chown $ASRERISKUSER. /var/run/asterisk \
  && chown -R $ASTERISKUSER. /etc/asterisk \
@@ -145,10 +145,6 @@ RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-
  && /usr/src/freepbx/install -n 1>/dev/null \
  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null \
 
-# Attempt to change default web port from 80 to $FREEPBXPORT - currently 8009
- && sed -i 's/Listen 80/Listen $FREEPBXPORT/' /etc/apache2/ports.conf \
- && sed -i 's/<VirtualHost *: 80>/<VirtualHost *: $FREEPBXPORT>/' /etc/apache2/sites-enabled/000-default.conf \
- && service apache2 restart \
 #clean up
  && find /temp -mindepth 1 -delete \
  && apt-get purge -y \
