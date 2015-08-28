@@ -9,7 +9,6 @@ ENV ASTERISKUSER asterisk
 ENV ASTERISKVER 13.1
 ENV FREEPBXVER 13.0
 ENV FREEPBXPORT 8009
-ENV MYSQLPSSWD pass123
 ENV ASTERISK_DB_PW pass123
 ENV AUTOBUILD_UNIXTIME 1418234402
 # Use baseimage-docker's init system.
@@ -37,9 +36,8 @@ RUN apt-get install -y build-essential linux-headers-`uname -r` openssh-server a
 RUN pear install Console_Getopt \\
 # Start maria DB
 && service mysql start \\
-&& update-rc.d mysql defaults \\
 # Make sure that NOBODY can access the server without a password
-&& mysql -e "UPDATE mysql.user SET Password = PASSWORD('$MYSQLPSSWD') WHERE User = 'root'" \\
+&& mysql -e "UPDATE mysql.user SET Password = PASSWORD('$ASTERISK_DB_PW') WHERE User = 'root'" \\
 # Kill the anonymous users
 && mysql -e "DROP USER ''@'localhost'" \\
 # Because our hostname varies we'll use some Bash magic here.
@@ -48,8 +46,6 @@ RUN pear install Console_Getopt \\
 && mysql -e "DROP DATABASE test" \\
 # Make our changes take effect
 && mysql -e "FLUSH PRIVILEGES" \\
-# start apache
-&& service apache2 restart \\
 
 # add asterisk user
 RUN groupadd -r $ASTERISKUSER \
