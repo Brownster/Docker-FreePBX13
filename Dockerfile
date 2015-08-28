@@ -129,11 +129,11 @@ RUN mkdir /etc/asterisk \
  && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
  && service apache2 restart 1>/dev/null \
- && mysqladmin -u root create asterisk \
- && mysqladmin -u root create asteriskcdrdb \
- && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
- && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
- && mysql -u root -e "flush privileges;"
+# && mysqladmin -u root create asterisk \
+# && mysqladmin -u root create asteriskcdrdb \
+# && mysql -u root -e "GRANT ALL PRIVILEGES ON asterisk.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+# && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
+# && mysql -u root -e "flush privileges;"
 
 WORKDIR /usr/src
 RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
