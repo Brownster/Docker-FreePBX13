@@ -1,5 +1,6 @@
 # Docker-FreePBX13
 Docker | Freepbx 13
 
+This is a Docker file to build a Asterisk 13.1 and FreePBX 13 container.
 
-Work in in progress planning to be a freepbx 13 docker for my unraid box
+Not had chance to try this out yet but should be pretty close to building, will be a few weeks before i get chance to do anything else with this.
