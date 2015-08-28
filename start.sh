@@ -5,4 +5,4 @@ service apache2 start
 # start mysql
 /etc/init.d/mysql start
 # start asterisk
-service asterisk start
+/usr/src/freepbx/start_asterisk start
