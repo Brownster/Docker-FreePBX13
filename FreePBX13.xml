@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container>
+  <Name>FreePBX 13</Name>
+  <Description>FreePBX 13 beta Asterisk 13.1 - Let Freedom Ring</Description>
+  <Registry>https://github.com/Brownster/Docker-FreePBX13</Registry>
+  <Repository>brownster/freepbx13</Repository>
+  <BindTime>true</BindTime>
+  <Privileged>false</Privileged>
+  <Environment/>
+  <Networking>
+    <Mode>bridge</Mode>
+    <Publish>
+      <Port>
+        <HostPort>8009</HostPort>
+        <ContainerPort>80</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+      <Port>
+        <HostPort>5060</HostPort>
+        <ContainerPort>5060</ContainerPort>
+        <Protocol>tcp</Protocol>
+      </Port>
+      <Port>
+        <HostPort>10000-20000</HostPort>
+        <ContainerPort>10000-20000</ContainerPort>
+        <Protocol>udp</Protocol>
+      </Port>
+    </Publish>
+  </Networking>
+  <Data>
+    <Volume>
+      <HostDir>/mnt/cache/appdata/freepbx/backup</HostDir>
+      <ContainerDir>/etc/freepbxbackup</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+  </Data>
+  <Version>05616fd2</Version>
+  <WebUI>http://[IP]:[PORT:8009]</WebUI>
+  <Banner>http://svn.freepbx.org/freepbx/trunk/amp_conf/htdocs/admin/images/freepbx_small.png</Banner>
+  <Icon>http://svn.freepbx.org/freepbx/trunk/amp_conf/htdocs/admin/images/freepbx.png</Icon>
+</Container>
