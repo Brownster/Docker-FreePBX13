@@ -63,10 +63,10 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
   && curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz 1>/dev/null \
 
 # gunzip asterisk
-  && mkdir /src/asterisk \
-  && tar -xzf /tmp/asterisk.tar.gz -C /src/asterisk --strip-components=1 1>/dev/null \
+  && mkdir /usr/src/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /usr/src/asterisk --strip-components=1 1>/dev/null \
   && rm -f /tmp/asterisk.tar.gz 1>/dev/null
-WORKDIR /src/asterisk
+WORKDIR /usr/src/asterisk
 
 # make asterisk.
 # ENV rebuild_date 2015-01-29
@@ -75,7 +75,7 @@ RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 # Remove the native build option
   && make menuselect.makeopts 1>/dev/null \
 #  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
- && menuselect/menuselect --enable chan_sip --disable BUILD_NATIVE  --enable CORE-SOUNDS-EN-WAV --enable CORE-SOUNDS-EN-SLN16 --enable MOH-OPSOUND-WAV --enable MOH-OPSOUND-SLN16 menuselect.makeopts  menuselect.makeopts 1>/dev/null \
+ && menuselect/menuselect --enable chan_sip --disable BUILD_NATIVE  --enable CORE-SOUNDS-EN-WAV --enable format_mp3 --enable CORE-SOUNDS-EN-SLN16 --enable MOH-OPSOUND-WAV --enable MOH-OPSOUND-SLN16 menuselect.makeopts  menuselect.makeopts 1>/dev/null \
 # Continue with a standard make.
  && make 1>/dev/null \
  && make install 1>/dev/null \
