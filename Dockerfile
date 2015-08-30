@@ -81,7 +81,7 @@ RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
  && make install 1>/dev/null \
  && make config 1>/dev/null \
  && ldconfig \
- && chkconfig asterisk off \
+#&& update-rc.d ? chkconfig asterisk off \
 # aterisk sounds files
  && cd /var/lib/asterisk/sounds 1>/dev/null \
  && wget http://downloads.asterisk.org/pub/telephony/sounds/asterisk-core-sounds-en-wav-current.tar.gz 1>/dev/null \
