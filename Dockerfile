@@ -60,16 +60,15 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
   && curl -sf -o /tmp/asterisk.tar.gz -L http://downloads.asterisk.org/pub/telephony/certified-asterisk/certified-asterisk-$ASTERISKVER-current.tar.gz 1>/dev/null \
 
 # gunzip asterisk
-  && mkdir /tmp/asterisk \
-  && tar -xzf /tmp/asterisk.tar.gz -C /tmp/asterisk --strip-components=1 1>/dev/null \
+  && mkdir /src/asterisk \
+  && tar -xzf /tmp/asterisk.tar.gz -C /src/asterisk --strip-components=1 1>/dev/null \
   && rm -f /tmp/asterisk.tar.gz 1>/dev/null
-WORKDIR /tmp/asterisk
+WORKDIR /src/asterisk
 
 # make asterisk.
 # ENV rebuild_date 2015-01-29
-RUN mkdir /etc/asterisk \
 # Configure
-  && ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
+RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 # Remove the native build option
   && make menuselect.makeopts 1>/dev/null \
 #  && sed -i "s/BUILD_NATIVE//" menuselect.makeopts 1>/dev/null \
