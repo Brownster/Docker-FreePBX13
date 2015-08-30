@@ -30,7 +30,9 @@ ADD start.sh /root/
 #Install packages that are needed
 RUN apt-get update && apt-get install -y build-essential linux-headers-generic openssh-server openssl libiksemel-dev lamp-server^ apache2 mysql-server mysql-client bison flex php5 php5-curl php5-cli php5-mysql php-pear php5-gd curl sox libncurses5-dev libssl-dev libmysqlclient-dev mpg123 libxml2-dev libnewt-dev sqlite3 libsqlite3-dev pkg-config automake libtool autoconf git unixodbc-dev uuid uuid-dev libasound2-dev libogg-dev libvorbis-dev libcurl4-openssl-dev libical-dev libneon27-dev libsrtp0-dev libspandsp-dev
 # Pear install
-RUN pear install Console_Getopt \
+#RUN pear install Console_Getopt \
+RUN pear uninstall db 1>/dev/null \
+  && pear install db-1.7.14 1>/dev/null
 
 # add asterisk user
 RUN groupadd -r $ASTERISKUSER \
