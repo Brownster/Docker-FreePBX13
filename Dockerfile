@@ -112,7 +112,7 @@ RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 
 #mod to apache
 #Setup mysql
- && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php.ini \
+ && sed -i 's/\(^upload_max_filesize = \).*/\120M/' /etc/php5/apache2/php.ini \
  && cp /etc/apache2/apache2.conf /etc/apache2/apache2.conf_orig \
  && sed -i 's/^\(User\|Group\).*/\1 asterisk/' /etc/apache2/apache2.conf \
  && sed -i 's/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
