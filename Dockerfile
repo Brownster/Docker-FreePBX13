@@ -125,13 +125,13 @@ RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 
 WORKDIR /usr/src
 RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
- && tar vxfz freepbx-$FREEPBXVER-latest.tgz 1>/dev/null \
+ && tar vxfz freepbx-$FREEPBXVER-latest.tgz freepbx 1>/dev/null \
  && rm -f freepbx-$FREEPBXVER-latest.tgz 1>/dev/null
  
 RUN /etc/init.d/mysql start 1>/dev/null \
- && /usr/sbin/asterisk 1>/dev/null \
-#&& /usr/src/freepbx/start_asterisk start 1>/dev/null \
- && /usr/src/freepbx/install -n 1>/dev/null \
+#&& /usr/sbin/asterisk 1>/dev/null \
+ && /usr/src/freepbx/start_asterisk start 1>/dev/null \
+ && ./usr/src/freepbx/install -n 1>/dev/null \
  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null
 
 #clean up
