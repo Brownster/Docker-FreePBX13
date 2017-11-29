@@ -133,7 +133,10 @@ RUN /etc/init.d/mysql start 1>/dev/null \
  && /usr/src/freepbx/start_asterisk start 1>/dev/null \
  && ./usr/src/freepbx/install -n 1>/dev/null \
  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null
-
+ 
+#for persistanc
+VOLUME ["/etc/asterisk","/etc/apache2","/var/www/html","/var/lib/mysql","/var/spool/asterisk","/var/lib/asterisk"]
+ 
 #clean up
 RUN find /temp -mindepth 1 -delete \
  && apt-get purge -y \
