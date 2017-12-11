@@ -9,7 +9,7 @@ I HAVE ONE ALREADY BUILT BASED ON FREEPBX 12 JUST RUN SOMETHING LIKE:
 
 sudo docker run --name freepbx \
 -v /mnt/user/appdata/freepbx/backup:/freepbx/backup \
--v /mnt/user/appdata/freepbx/etc/asterisk:target=/etc/asterisk \
+-v /mnt/user/appdata/freepbx/etc/asterisk:/etc/asterisk \
 -v /mnt/user/appdata/freepbx/etc/apache2:/etc/apache2 \
 -v /mnt/user/appdata/freepbx/var/www:/var/www/ \
 -v /mnt/user/appdata/freepbx/var/lib/mysql:/var/lib/mysql \
