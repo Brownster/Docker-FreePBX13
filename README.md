@@ -5,6 +5,7 @@ This is a Docker file to build a Asterisk 13.1 and FreePBX 13 container, with XM
 
 Not had chance to try this out yet but should be pretty close to building, will be a few weeks before i get chance to do anything else with this.
 
+I HAVE ONE ALREADY BUILT BASED ON FREPBX 12 JUST RUN SOMETHING LIKE:
 
 sudo docker run --name freepbx \
 -v /mnt/user/appdata/freepbx/backup:/freepbx/backup \
