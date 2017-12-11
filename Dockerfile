@@ -19,10 +19,10 @@ CMD ["/sbin/my_init"]
 VOLUME ["/etc/freepbxbackup"]
 
 # open up ports needed  by freepbx and asterisk 5060 tcp sip reg 80 tcp web port 10000-20000 udp rtp stream  
-EXPOSE 5060
-EXPOSE 80
-EXPOSE $FREEPBXPORT
-EXPOSE 10000-20000/udp
+#EXPOSE 5060
+#EXPOSE 80
+#EXPOSE $FREEPBXPORT
+#EXPOSE 10000-20000/udp
 
 # Add start.sh
 ADD start.sh /root/
@@ -69,7 +69,7 @@ RUN git clone https://github.com/asterisk/pjproject.git 1>/dev/null \
 WORKDIR /usr/src/asterisk
 
 # make asterisk.
-# ENV rebuild_date 2015-01-29
+# ENV rebuild_date 2017-12-11
 # Configure
 RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 # Remove the native build option
@@ -134,7 +134,11 @@ RUN /etc/init.d/mysql start 1>/dev/null \
  && ./usr/src/freepbx/install -n 1>/dev/null \
  && chown -R $ASTERISKUSER. /var/lib/asterisk/bin/retrieve_conf 1>/dev/null
  
-#for persistanc
+#ODBC
+COPY odbc.ini /etc/
+COPY odbcinst.ini /etc/
+ 
+#for persistance
 VOLUME ["/etc/asterisk","/etc/apache2","/var/www/html","/var/lib/mysql","/var/spool/asterisk","/var/lib/asterisk"]
  
 #clean up
