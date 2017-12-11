@@ -35,6 +35,36 @@
       <ContainerDir>/etc/freepbxbackup</ContainerDir>
       <Mode>rw</Mode>
     </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/freepbx/etc/apache2</HostDir>
+      <ContainerDir>/etc/apache2</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+	<Volume>
+      <HostDir>/mnt/user/appdata/freepbx/var/www</HostDir>
+      <ContainerDir>/var/www/</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/freepbx/var/lib/mysql</HostDir>
+      <ContainerDir>/var/lib/mysql</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+   <Volume>
+      <HostDir>/mnt/user/appdata/freepbx/var/lib/mysql/var/spool/asterisk</HostDir>
+      <ContainerDir>/var/spool/asterisk</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+	<Volume>
+      <HostDir></HostDir>
+      <ContainerDir>/downloads</ContainerDir>
+      <Mode>rw</Mode>
+    </Volume>
+    <Volume>
+      <HostDir>/mnt/user/appdata/freepbx/var/lib/mysql/var/lib/asterisk</HostDir>
+      <ContainerDir>/var/lib/asterisk</ContainerDir>
+      <Mode>rw</Mode>
+     </Volume>
   </Data>
   <Version>05616fd2</Version>
   <WebUI>http://[IP]:[PORT:8009]</WebUI>
