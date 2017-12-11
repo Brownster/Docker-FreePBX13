@@ -123,6 +123,7 @@ RUN ./configure --with-ssl=/opt/local --with-crypto=/opt/local 1>/dev/null \
 # && mysql -u root -e "GRANT ALL PRIVILEGES ON asteriskcdrdb.* TO $ASTERISKUSER@localhost IDENTIFIED BY '$ASTERISK_DB_PW';" \
 # && mysql -u root -e "flush privileges;"
 
+#Install freepbx
 WORKDIR /usr/src
 RUN wget http://mirror.freepbx.org/modules/packages/freepbx/freepbx-$FREEPBXVER-latest.tgz 1>/dev/null 2>/dev/null \
  && tar vxfz freepbx-$FREEPBXVER-latest.tgz freepbx 1>/dev/null \
